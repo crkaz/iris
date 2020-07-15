@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "vIXMBmnvxp/iFOYkhtyshhuCI0VB9pkU/p4NtPeJBd0ZZadJ9EZDZOE9BJyvJ5Upgw43atZfdL7Hx+zllXwceg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ZAK\\source\\repos\\bsc-computer-science-dissertation\\iris\\iris\\Assets\\MRTK\\Providers\\WindowsMixedReality\\Shared\\DotNetAdapter\\DotNetAdapter.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ZAK\\.nuget\\packages\\microsoft.windows.mixedreality.dotnetwinrt\\0.5.1049\\microsoft.windows.mixedreality.dotnetwinrt.0.5.1049.nupkg.sha512",
+    "C:\\Users\\ZAK\\.nuget\\packages\\system.drawing.primitives\\4.3.0\\system.drawing.primitives.4.3.0.nupkg.sha512"
+  ],
+  "logs": []
+}

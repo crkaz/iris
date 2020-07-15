@@ -1,0 +1,58 @@
+{
+  "format": 1,
+  "restore": {
+    "D:\\repos\\Dissertation\\iris\\iris\\Assets\\iris.Dependencies.msb4u.csproj": {}
+  },
+  "projects": {
+    "D:\\repos\\Dissertation\\iris\\iris\\Assets\\iris.Dependencies.msb4u.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "D:\\repos\\Dissertation\\iris\\iris\\Assets\\iris.Dependencies.msb4u.csproj",
+        "projectName": "iris.Dependencies.msb4u",
+        "projectPath": "D:\\repos\\Dissertation\\iris\\iris\\Assets\\iris.Dependencies.msb4u.csproj",
+        "packagesPath": "C:\\Users\\Zak\\.nuget\\packages\\",
+        "outputPath": "D:\\repos\\Dissertation\\iris\\iris\\MSBuild\\Output\\obj\\Dependencies\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "D:\\repos\\Dissertation\\iris\\iris\\Assets\\NuGet.Config",
+          "C:\\Users\\Zak\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net46"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://pkgs.dev.azure.com/UnityDeveloperTools/MSBuildForUnity/_packaging/UnityDeveloperTools/nuget/v3/index.json": {}
+        },
+        "frameworks": {
+          "net46": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net46": {
+          "dependencies": {
+            "MSBuildForUnity": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers",
+              "suppressParent": "Analyzers",
+              "target": "Package",
+              "version": "[0.9.1-*, 0.9.1]"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

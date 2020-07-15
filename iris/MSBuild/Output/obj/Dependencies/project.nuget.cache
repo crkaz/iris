@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "vPk7jbOBEzs/dDfbr7qkzM3QPBL5434TRxDrCujJ2TOylQ8kr5i64qxHC5lR7e+Sj12MdNF4iJAG16CpozAj6Q==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\ZAK\\source\\repos\\bsc-computer-science-dissertation\\iris\\iris\\Assets\\iris.Dependencies.msb4u.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\ZAK\\.nuget\\packages\\microsoft.windows.mixedreality.dotnetwinrt\\0.5.1049\\microsoft.windows.mixedreality.dotnetwinrt.0.5.1049.nupkg.sha512",
+    "C:\\Users\\ZAK\\.nuget\\packages\\msbuildforunity\\0.9.1-123842\\msbuildforunity.0.9.1-123842.nupkg.sha512",
+    "C:\\Users\\ZAK\\.nuget\\packages\\system.drawing.primitives\\4.3.0\\system.drawing.primitives.4.3.0.nupkg.sha512"
+  ],
+  "logs": []
+}

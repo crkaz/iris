@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARInfo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="QCAR_Dataset_config.xsd">
+  <TargetSet version="5.0" toolVersion="4.2.0">
+    <ObjectTarget bbox="0.0000 0.0000 0.0000 0.1425 0.0950 0.0950" captureAppVersion="6.5.0" lastSaved="2020-07-12T09:50:08Z" name="joker" targetId="86a018250cff40638920390616e21692" version="2.0" />
+    <ObjectTarget bbox="0.0000 0.0000 0.0000 0.1425 0.0950 0.0950" captureAppVersion="6.5.0" lastSaved="2020-07-12T09:57:44Z" name="alarm" targetId="c933ee6bcab6489584e7bed8c687d11d" version="2.0" />
+    <ObjectTarget bbox="0.0000 0.0000 0.0000 0.1425 0.0950 0.0950" captureAppVersion="6.5.0" lastSaved="2020-07-11T14:49:23Z" name="toothbrush" targetId="91d3efa16fc6438a8ab4a50c69ae1982" version="2.0" />
+    <ObjectTarget bbox="0.0000 0.0000 0.0000 0.1425 0.0950 0.0950" captureAppVersion="6.5.0" lastSaved="2020-07-11T14:41:02Z" name="car_key" targetId="d0abd7296e89402093a47ec066675e08" version="2.0" />
+    <ObjectTarget bbox="0.0000 0.0000 0.0000 0.1425 0.0950 0.0950" captureAppVersion="6.5.0" lastSaved="2020-07-11T12:24:41Z" name="kitchen_hob" targetId="e5613b8f72804da9beb60119b94b662b" version="2.0" />
+  </TargetSet>
+</QCARInfo>
