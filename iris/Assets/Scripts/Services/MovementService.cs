@@ -32,6 +32,7 @@ public class MovementService : MonoBehaviour
         for (; ; )
         {
             yield return new WaitForSeconds(ANALYSIS_FREQUENCY);
+            Debug.Log("Analysing patient movement.");
             this.Analyse();
         }
     }
@@ -54,6 +55,11 @@ public class MovementService : MonoBehaviour
 
     private void HandleResponse(IDictionary<string, object> responseDict)
     {
+        bool hasFallen = (bool)responseDict["falldetection"];
+        if (hasFallen){
+            IrisService.Instance.PostActivity("Patient has fallen!");
+            IrisService.Instance.UpdateOnlineStatus("alert");
+        }
         //FallDetection.HandleResponse(responseDict["falldetection"]);
         //RoomDetection.HandleResponse(responseDict["roomdetection"]);
         //ConfusionDetection.HandleResponse(responseDict["confusiondetection"]);

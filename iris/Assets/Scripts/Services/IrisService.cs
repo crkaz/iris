@@ -5,6 +5,7 @@ using UnityEngine;
 using Microsoft.MixedReality.Toolkit.Utilities;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.IO;
 
 public class IrisService : MonoBehaviour
 {
@@ -16,22 +17,24 @@ public class IrisService : MonoBehaviour
     private const float POLL_RATE = 3.0f;
 
 
-    // Implements singleton pattern.
-    public static IrisService Instance;
 
 
     // Collections/members.
     public IList<PatientMessage> Messages { get; private set; }
     public IList<CalendarEntry> CalendarEntries { get; private set; }
-    public string Location { get; set; }
+    private bool firstDetect = true;
+    public string Location = "unknown";
 
 
+    #region Implements singleton pattern.
+    public static IrisService Instance;
     private void Awake()
     {
         Instance = this;
         Init();
         StartCoroutine(ObserveServer());
     }
+    #endregion
 
 
     private void OnDestroy()
@@ -46,8 +49,9 @@ public class IrisService : MonoBehaviour
         if (response.ResponseCode == 200)
         {
             IrisNotificationsService.Instance.Notify("Connected to IRIS server successfully.");
-            await UpdateOnlineStatus("online");
+            UpdateOnlineStatus("online");
             PostActivity("Connected");
+            VisionService.Instance.CaptureImage("detectroom");
 
             // Initialise collections.
             this.Messages = new List<PatientMessage>();
@@ -64,10 +68,10 @@ public class IrisService : MonoBehaviour
     }
 
 
-    private async void Destroy()
+    private void Destroy()
     {
         PostActivity("Disconnected");
-        await UpdateOnlineStatus("offline");
+        UpdateOnlineStatus("offline");
     }
 
 
@@ -139,12 +143,6 @@ public class IrisService : MonoBehaviour
     }
 
 
-    private async Task UpdateOnlineStatus(string status)
-    {
-        string ENDPOINT = HOST + "patient/updatestatus/?status=" + status;
-        var response = await Rest.GetAsync(ENDPOINT, HEADERS, readResponseData: true);
-    }
-
     private async Task<IList<PatientMessage>> GetMessages()
     {
         const string ENDPOINT = HOST + "message/get";
@@ -167,9 +165,49 @@ public class IrisService : MonoBehaviour
 
     #region  Public
 
-    public async void PostActivity(string caption, string location = "unknown", string jsonDescription = "")
+    public async void UpdateOnlineStatus(string status)
     {
-        ActivityLog log = new ActivityLog() { Caption = caption, Location = location, JsonDescription = jsonDescription };
+        string ENDPOINT = HOST + "patient/updatestatus/?status=" + status;
+        var response = await Rest.GetAsync(ENDPOINT, HEADERS, readResponseData: true);
+    }
+
+
+    public async Task<Response> AnalyseImage(byte[] imageBytes)
+    {
+        Dictionary<string, string> headers = new Dictionary<string, string>() {
+            { "ApiKey", API_KEY },
+            { "Content-Type", "application/octet-stream" }
+             };
+        const string ENDPOINT = HOST + "compute/analyseimage";
+        var response = await Rest.PostAsync(ENDPOINT, imageBytes, headers, readResponseData: true);
+        Debug.Log(response.ResponseBody);
+        return response;
+    }
+
+
+    public async void DetectRoom(byte[] imageBytes)
+    {
+        Dictionary<string, string> headers = new Dictionary<string, string>() {
+            { "ApiKey", API_KEY },
+            { "Content-Type", "application/octet-stream" }
+             };
+        const string ENDPOINT = HOST + "compute/detectroom";
+        var response = await Rest.PostAsync(ENDPOINT, imageBytes, headers, readResponseData: true);
+
+        // Update room.
+        Debug.Log("Detected room: " + response.ResponseBody);
+        if (this.Location != response.ResponseBody && !this.firstDetect)
+        {
+            this.firstDetect = false;
+            PostActivity("Entered " + response.ResponseBody);
+        }
+        this.Location = response.ResponseBody;
+    }
+
+
+    public async void PostActivity(string caption, string jsonDescription = "")
+    {
+        ActivityLog log = new ActivityLog() { Caption = caption, Location = this.Location, JsonDescription = jsonDescription };
         string bodyJson = JsonConvert.SerializeObject(log);
         const string ENDPOINT = HOST + "patient/logs";
         var response = await Rest.PostAsync(ENDPOINT, bodyJson, HEADERS);
@@ -185,13 +223,12 @@ public class IrisService : MonoBehaviour
     }
 
 
-    // CAN POTENTIALL REMOVE IN FAVOUR OF ANALYSEMOVEMENT()
     public async Task<bool> DetectFall(string yTransformsJson)
     {
         const string ENDPOINT = HOST + "compute/detectfall";
         var response = await Rest.PostAsync(ENDPOINT, yTransformsJson, HEADERS, readResponseData: true);
-        Debug.Log(response.ResponseBody);
-        bool fallDetected = bool.Parse(response.ResponseBody);
+        Dictionary<string, object> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.ResponseBody);
+        bool fallDetected = (bool)jsonDict["falldetection"];
         Debug.Log(fallDetected);
         return fallDetected;
     }
@@ -201,9 +238,9 @@ public class IrisService : MonoBehaviour
     {
         const string ENDPOINT = HOST + "compute/analysemovement";
         var response = await Rest.PostAsync(ENDPOINT, transformsJson, HEADERS, readResponseData: true);
-        //Debug.Log(response.ResponseBody);
-        //bool fallDetected = bool.Parse(response.ResponseBody);
-        //Debug.Log(fallDetected);
+        Dictionary<string, object> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.ResponseBody);
+        bool fallDetected = (bool)jsonDict["falldetection"];
+        Debug.Log(fallDetected);
         return response;
     }
 

@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class IrisNotificationsService : MonoBehaviour
 {
-    // Implements singleton pattern.
+    #region Implements singleton pattern.
     public static IrisNotificationsService Instance;
 
     private void Awake()
     {
         Instance = this;
     }
+    #endregion
 
     public GameObject notificationsBarPrefab;
 
