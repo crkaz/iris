@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class MovementService : MonoBehaviour
 {
-    private const float ANALYSIS_FREQUENCY = 10.0f; // How many seconds until the transforms should be processed.
-    private const float UPDATE_FREQUENCY = 0.5f; // How frequently the current y-pos should be recorded.
+    private const float ANALYSIS_FREQUENCY = 5.0f; // How many seconds until the transforms should be processed.
+    private const float UPDATE_FREQUENCY = 0.25f; // How frequently the current y-pos should be recorded.
 
 
     void Start()
@@ -56,17 +56,26 @@ public class MovementService : MonoBehaviour
     private void HandleResponse(IDictionary<string, object> responseDict)
     {
         bool hasFallen = (bool)responseDict["falldetection"];
+        Debug.Log(hasFallen);
         if (hasFallen){
             IrisService.Instance.PostActivity("Patient has fallen!");
             IrisService.Instance.UpdateOnlineStatus("alert");
         }
-        //FallDetection.HandleResponse(responseDict["falldetection"]);
-        //RoomDetection.HandleResponse(responseDict["roomdetection"]);
-        //ConfusionDetection.HandleResponse(responseDict["confusiondetection"]);
+        
+        bool shouldDetectRoom = (bool)responseDict["movementdetection"];
+        Debug.Log(shouldDetectRoom);
+        if (shouldDetectRoom){
+            VisionService.Instance.CaptureImage("detectroom");
+        }
+        
+        // bool shouldDetectObjects = (bool)responseDict["confusiondetection"];
+        // if (shouldDetectObjects){
+        //     VisionService.Instance.CaptureImage("analyse");
+        // }
     }
 
 
-    internal class MovementLog
+    private class MovementLog
     {
         #region Singleton pattern.
         private static MovementLog instance;

@@ -9,6 +9,7 @@ using System.IO;
 
 public class IrisService : MonoBehaviour
 {
+    #region Variables
     // Consts.
     public const string HOST = "http://localhost:54268/api/";
     public const string API_KEY = "testpatient";
@@ -17,14 +18,13 @@ public class IrisService : MonoBehaviour
     private const float POLL_RATE = 3.0f;
 
 
-
-
     // Collections/members.
     public IList<PatientMessage> Messages { get; private set; }
     public IList<CalendarEntry> CalendarEntries { get; private set; }
     private bool firstDetect = true;
     public string Location = "unknown";
 
+    #endregion
 
     #region Implements singleton pattern.
     public static IrisService Instance;
@@ -36,12 +36,10 @@ public class IrisService : MonoBehaviour
     }
     #endregion
 
-
     private void OnDestroy()
     {
         Destroy();
     }
-
 
     private async void Init()
     {
@@ -67,7 +65,6 @@ public class IrisService : MonoBehaviour
         }
     }
 
-
     private void Destroy()
     {
         PostActivity("Disconnected");
@@ -75,7 +72,6 @@ public class IrisService : MonoBehaviour
     }
 
 
-    #region Private
 
     private async void UpdateCollections()
     {
@@ -89,7 +85,7 @@ public class IrisService : MonoBehaviour
             if (this.Messages.Count > nMessagesBeforeUpdate)
             {
                 Debug.Log("New messages");
-                IrisNotificationsService.Instance.Notify("You've received a new message. Say, 'Messages', when you want to view it.");
+                IrisNotificationsService.Instance.Notify("You've received a new message. Say, 'Messages', when you want to view it.", 5.0f);
             }
             // await LoadMessages();
             this.CalendarEntries = await this.GetCalendarEntries();
@@ -99,20 +95,6 @@ public class IrisService : MonoBehaviour
             Debug.Log("Unxepected error whilst updating collections:\n" + e.Message);
         }
     }
-
-
-    // private async Task LoadMessages()
-    // {
-    //     int currntNumMessages = this.Messages.Count;
-    //     this.Messages = await this.GetMessages();
-
-    //     // Notify user of new messages.
-    //     if (currntNumMessages != this.Messages.Count)
-    //     {
-    //         IrisNotificationsService.Instance.Notify("You've received a new message. Say, 'Messages', when you want to view it.");
-    //     }
-    // }
-
 
 
     // Coroutine for fetching server changes. Not truly "observing" : server would need to implement SSE or websockets.
@@ -160,10 +142,8 @@ public class IrisService : MonoBehaviour
         return calendarEntries;
     }
 
-    #endregion
 
 
-    #region  Public
 
     public async void UpdateOnlineStatus(string status)
     {
@@ -181,6 +161,7 @@ public class IrisService : MonoBehaviour
         const string ENDPOINT = HOST + "compute/analyseimage";
         var response = await Rest.PostAsync(ENDPOINT, imageBytes, headers, readResponseData: true);
         Debug.Log(response.ResponseBody);
+        PostActivity("Confusion Detected", response.ResponseBody);
         return response;
     }
 
@@ -196,12 +177,42 @@ public class IrisService : MonoBehaviour
 
         // Update room.
         Debug.Log("Detected room: " + response.ResponseBody);
-        if (this.Location != response.ResponseBody && !this.firstDetect)
+        if (this.firstDetect)
         {
+            this.Location = response.ResponseBody;
             this.firstDetect = false;
-            PostActivity("Entered " + response.ResponseBody);
+            PostActivity("Connected");
         }
-        this.Location = response.ResponseBody;
+        else if (this.Location != response.ResponseBody)
+        {
+            this.Location = response.ResponseBody;
+            PostActivity("Entered " + response.ResponseBody);
+            ContextAwarePrompt();
+        }
+    }
+
+
+    private void ContextAwarePrompt()
+    {
+        // TODO: THIS IS A DEMO IMPLEMENTATION. Needs to be individualised from patient config.
+        string prompt = "";
+        switch (this.Location)
+        {
+            case "kitchen":
+                prompt = "Have you eaten today?";
+                break;
+            case "bedroom":
+                prompt = "Have you made your bed today?";
+                break;
+            case "bathroom":
+                prompt = "Have you brushed your teeth today?";
+                break;
+        }
+
+        if (this.Location.ToLower() != "unknown")
+        {
+            IrisNotificationsService.Instance.Notify(prompt, 10.0f);
+        }
     }
 
 
@@ -223,24 +234,17 @@ public class IrisService : MonoBehaviour
     }
 
 
-    public async Task<bool> DetectFall(string yTransformsJson)
-    {
-        const string ENDPOINT = HOST + "compute/detectfall";
-        var response = await Rest.PostAsync(ENDPOINT, yTransformsJson, HEADERS, readResponseData: true);
-        Dictionary<string, object> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.ResponseBody);
-        bool fallDetected = (bool)jsonDict["falldetection"];
-        Debug.Log(fallDetected);
-        return fallDetected;
-    }
-
-
     public async Task<Response> AnalyseMovement(string transformsJson)
     {
         const string ENDPOINT = HOST + "compute/analysemovement";
         var response = await Rest.PostAsync(ENDPOINT, transformsJson, HEADERS, readResponseData: true);
-        Dictionary<string, object> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.ResponseBody);
-        bool fallDetected = (bool)jsonDict["falldetection"];
-        Debug.Log(fallDetected);
+        // Dictionary<string, object> jsonDict = JsonConvert.DeserializeObject<Dictionary<string, object>>(response.ResponseBody);
+        // bool fallDetected = (bool)jsonDict["falldetection"];
+        // Debug.Log("Fall detected: " + fallDetected);
+        // bool movementDetected = (bool)jsonDict["movementdetection"];
+        // Debug.Log("Movement detected: " + movementDetected);
+        // bool confusionDetected = (bool)jsonDict["confusiondetection"];
+        // Debug.Log("Confusion detected: " + confusionDetected);
         return response;
     }
 
@@ -253,5 +257,4 @@ public class IrisService : MonoBehaviour
         await Rest.GetAsync(ENDPOINT, HEADERS);
     }
 
-    #endregion
 }

@@ -75,9 +75,6 @@ public class VisionService : MonoBehaviour
         {
             currentlyCapturing = true;
 
-            // Create a label in world space using the ResultsLabel class
-            // ResultsLabel.instance.CreateLabel(cursor);
-
             // Set the camera resolution to be the highest possible    
             Resolution cameraResolution = UnityEngine.Windows.WebCam.PhotoCapture.SupportedResolutions.OrderByDescending((res) => res.width * res.height).First();
 
